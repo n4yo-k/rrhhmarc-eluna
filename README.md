@@ -7,7 +7,8 @@ Usuario -> Web (Nginx, puerto 8080) -> API REST (Node/Express, puerto 3001) -> P
 1. Copiar `.env.example` a `.env` y ajustar contraseñas.
 2. Ejecutar: `docker compose up -d --build`
 3. Web: http://localhost:8080
-4. API: http://localhost:3001/api/marcaciones
+4. API: http://localhost:3005/api/marcaciones
+## Se usa el puerto 3005 por que en mi dispositivo el 3001... estaban ocupados
 
 ## Endpoints
 - POST /api/marcaciones
