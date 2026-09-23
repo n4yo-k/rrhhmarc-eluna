@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>RRHH - Marcaciones</title>
+<style>
+body{font-family:Arial;margin:20px}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #ccc;padding:6px;text-align:left}
+input{margin:2px;padding:4px}
+</style>
+</head>
+<body>
+<h2>Registro de Marcaciones</h2>
+
+<form id="form">
+  <input name="codigo_empleado" placeholder="Código empleado" required>
+  <input name="nombre_empleado" placeholder="Nombre" required>
+  <input type="date" name="fecha" required>
+  <input type="time" name="hora_ingreso_programada" required>
+  <input type="time" name="hora_ingreso_real" required>
+  <input type="time" name="hora_salida_programada" required>
+  <input type="time" name="hora_salida_real" required>
+  <button type="submit">Guardar</button>
+</form>
+
+<p>Filtrar por empleado: <input id="filtro"> <button onclick="cargar()">Buscar</button> <button onclick="document.getElementById('filtro').value='';cargar()">Ver todos</button></p>
+
+<table id="tabla">
+<thead><tr><th>ID</th><th>Empleado</th><th>Fecha</th><th>Ingreso</th><th>Salida</th><th>Estado</th></tr></thead>
+<tbody></tbody>
+</table>
+
+<script>
+const API = 'http://localhost:3005/api/marcaciones';
+
+async function cargar() {
+  const filtro = document.getElementById('filtro').value;
+  const url = filtro ? `${API}?empleado=${filtro}` : API;
+  const res = await fetch(url);
+  const datos = await res.json();
+  const tbody = document.querySelector('#tabla tbody');
+  tbody.innerHTML = '';
+  datos.forEach(m => {
+    tbody.innerHTML += `<tr>
+      <td>${m.id}</td><td>${m.nombre_empleado} (${m.codigo_empleado})</td>
+      <td>${m.fecha}</td><td>${m.hora_ingreso_real}</td><td>${m.hora_salida_real}</td>
+      <td>${m.estado}</td></tr>`;
+  });
+}
+
+document.getElementById('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target));
+  await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  e.target.reset();
+  cargar();
+});
+
+cargar();
+</script>
+</body>
+</html>
